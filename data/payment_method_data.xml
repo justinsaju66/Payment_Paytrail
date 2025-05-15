@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo noupdate="1">
+    <!-- Paytrail Payment Method -->
+    <record id="payment_method_paytrail" model="payment.method">
+        <field name="name">Paytrail</field>
+        <field name="code">paytrail</field>
+        <field name="sequence">20</field>
+        <field name="active">True</field>
+<!--        <field name="image" type="base64" file="payment_paytrail_nets/static/img/paytrail_logo.png"/>-->
+        <field name="support_tokenization">True</field>
+        <field name="support_express_checkout">True</field>
+        <field name="support_refund">partial</field>
+    </record>
+
+    <!-- Inbound Payment Method -->
+    <record id="account_payment_method_paytrail_in" model="account.payment.method">
+        <field name="name">Paytrail</field>
+        <field name="code">paytrail</field>
+        <field name="payment_type">inbound</field>
+    </record>
+
+    <!-- Outbound Payment Method -->
+    <record id="account_payment_method_paytrail_out" model="account.payment.method">
+        <field name="name">Paytrail</field>
+        <field name="code">paytrail</field>
+        <field name="payment_type">outbound</field>
+    </record>
+</odoo>
+
+
