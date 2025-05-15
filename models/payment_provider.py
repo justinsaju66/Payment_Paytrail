@@ -131,6 +131,3 @@ class PaymentProvider(models.Model):
                 "sticky": False,
             },
         }
-
-
-
