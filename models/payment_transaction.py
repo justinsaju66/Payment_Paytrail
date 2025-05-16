@@ -112,50 +112,6 @@ class PaymentTransaction(models.Model):
             raise ValidationError("Paytrail: " + _("No transaction found matching reference %s.", reference))
         return tx
 
-    def create_invoice_from_payment(self):
-        """Create an invoice and mark it as paid"""
-        order = self.sale_order_ids[0]
-        if order.state not in ('sale', 'done'):
-            order.action_confirm()
-
-        invoice_vals = {
-            'partner_id': order.partner_id.id,
-            'move_type': 'out_invoice',
-            'ref': order.name,
-            'invoice_date': fields.Date.today(),
-            'invoice_line_ids': [
-                Command.create({
-                    'product_id': line.product_id.id,
-                    'quantity': line.product_uom_qty,
-                    'price_unit': line.price_unit,
-                    'sale_line_ids': [line.id],
-                    'name': line.name,
-                }) for line in order.order_line],
-        }
-        invoice = self.env['account.move'].sudo().create(invoice_vals)
-        invoice.action_post()
-
-        payment = self.env['account.payment'].sudo().create({
-            'payment_type': 'inbound',
-            'partner_type': 'customer',
-            'partner_id': order.partner_id.id,
-            'amount': invoice.amount_total,
-            'currency_id': invoice.currency_id.id,
-            'journal_id': self.env['account.journal'].search(
-                [('type', '=', 'bank'), ('company_id', '=', invoice.company_id.id)], limit=1).id,
-            'payment_method_id': self.env.ref('account.account_payment_method_manual_in').id,
-            'date': fields.Date.today(),
-            'invoice_ids': [(6, 0, [invoice.id])],
-        })
-        payment.action_post()
-
-        payment_line = payment.move_id.line_ids.filtered(
-            lambda line: line.account_id.account_type == 'asset_receivable')
-        invoice.js_assign_outstanding_line(payment_line.id)
-
-        return invoice
-
-
     def _process_notification_data(self, notification_data):
         super()._process_notification_data(notification_data)
         if self.provider_code != "paytrail":
@@ -169,7 +125,6 @@ class PaymentTransaction(models.Model):
         status = notification_data.get("checkout-status")
         if status == "ok":
             self._set_done()
-            self.create_invoice_from_payment()
         elif status in ["pending", "delayed"]:
             self._set_pending()
         elif status == "fail":
