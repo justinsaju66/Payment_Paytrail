@@ -27,6 +27,14 @@ class PaymentProvider(models.Model):
         default=lambda self: self._get_default_base_url(),
         required_if_provider="paytrail",
     )
+    # paytrail_send_invoice_data_if_no_sale_order = fields.Boolean(
+    #     string="Send Invoice Data if no Sale Order Exists",
+    #     default=True,
+    #     help="When sending data to Paytrail, if a related Sale Order does not exist, "
+    #          "look for customer, monetary amount etc. data from a related Invoice instead. "
+    #          "Can be toggled on if dealing with e.g. invoices that have originated from "
+    #          "Contracts and do not have a Sale Order.",
+    # )
 
     def _get_default_base_url(self):
         return self.env["ir.config_parameter"].get_param("web.base.url")
