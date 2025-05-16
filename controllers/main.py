@@ -20,7 +20,7 @@ class PaytrailController(http.Controller):
         auth="public",
     )
     def paytrail_return_from_checkout(self, **data):
-        """ """
+        print(data)
         tx_sudo = (
             request.env["payment.transaction"]
             .sudo()
@@ -32,14 +32,7 @@ class PaytrailController(http.Controller):
 
     @staticmethod
     def _verify_notification_signature(notification_data, tx_sudo):
-        """Check that the received signature matches the expected one.
 
-        :param dict notification_data: The notification data
-        :param recordset tx_sudo: The sudoed transaction referenced by the notification data, as a
-                                  `payment.transaction` record
-        :return: None
-        :raise: :class:`werkzeug.exceptions. Forbidden` if the signatures don't match
-        """
         # Retrieve the received signature from the data
         received_signature = notification_data.get("signature")
         if not received_signature:

@@ -20,19 +20,10 @@
                         name="paytrail_base_url"
                         required="code == 'paytrail' and state != 'disabled'"
                     />
-<!--                    <field name="paytrail_send_invoice_data_if_no_sale_order" />-->
                 </group>
             </group>
 
-            <xpath expr="//a[@name='action_view_payment_methods']" position="after">
-                <button
-                    name="action_paytrail_update_method_brands"
-                    type="object"
-                    string="Auto-enable"
-                    class="oe_highlight"
-                    invisible="code != 'paytrail' or state == 'disabled'"
-                />
-            </xpath>
+
         </field>
     </record>
 </odoo>

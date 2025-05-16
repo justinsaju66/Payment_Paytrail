@@ -20,6 +20,7 @@ class PaymentTransaction(models.Model):
         if self.provider_code != "paytrail":
             return res
         payload = self._paytrail_prepare_payload()
+        print("payload",payload)
         token = self._paytrail_create_payment(payload)
         if token.get("status") == "error":
             raise ValidationError(token.get("message"))
@@ -88,6 +89,7 @@ class PaymentTransaction(models.Model):
 
     def _paytrail_create_payment(self, payload):
         headers = self.provider_id._get_paytrail_headers(payload)
+        print("Header=",headers)
         response = requests.post("https://services.paytrail.com/payments", headers=headers, data=payload)
         if response.status_code == 201:
             return response.json()
@@ -97,10 +99,12 @@ class PaymentTransaction(models.Model):
             return {"status": "error", "message": str(e)}
 
     def _get_tx_from_notification_data(self, provider_code, notification_data):
+        print(notification_data)
         tx = super()._get_tx_from_notification_data(provider_code, notification_data)
         if provider_code != "paytrail" or len(tx) == 1:
             return tx
         reference = notification_data.get("checkout-reference")
+        print("reference=",reference)
         if not reference:
             raise ValidationError("Paytrail: " + _("Missing transaction reference."))
         tx = self.search([("reference", "=", reference), ("provider_code", "=", "paytrail")])
