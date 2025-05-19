@@ -113,7 +113,6 @@ class PaymentProvider(models.Model):
                         not method_id.active
                         and method_id.primary_payment_method_id != paytrail_method
                     ):
-                        # Change the payment method for this brand
                         method_id.primary_payment_method_id = paytrail_method.id
 
                     method_id.active = True
