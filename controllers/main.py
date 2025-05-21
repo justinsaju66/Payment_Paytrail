@@ -20,7 +20,6 @@ class PaytrailController(http.Controller):
         auth="public",
     )
     def paytrail_return_from_checkout(self, **data):
-        print(data)
         tx_sudo = (
             request.env["payment.transaction"]
             .sudo()
